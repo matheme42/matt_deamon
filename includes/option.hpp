@@ -38,7 +38,7 @@ class Option {
         std::string resolve_dns(const std::string& domain_name);
         void        usage();
     public:
-        Option() = default;
+        Option();
         Option(const Option &option) = default;
         ~Option() = default;
         

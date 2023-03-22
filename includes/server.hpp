@@ -34,7 +34,7 @@ class Server {
         std::vector <std::string> taskNameList;
         int Demonize();
     public:
-        Server() = default;
+        Server();
         Server(const Server &server) = default;
         ~Server() = default;
         
