@@ -24,11 +24,11 @@ class Tintin_reporter {
         std::string getTime();
         void log(std::string message, std::string color, std::string level);
     public:
-        Tintin_reporter();
-        Tintin_reporter(const Tintin_reporter &reporter);
-        ~Tintin_reporter();
+        Tintin_reporter() = default;
+        Tintin_reporter(const Tintin_reporter &reporter) = default;
+        ~Tintin_reporter() = default;
         
-        Tintin_reporter &operator=(const Tintin_reporter &reporter);
+        Tintin_reporter &operator=(const Tintin_reporter &reporter) = default;
 
         void init(std::string outputfile);
         void close();

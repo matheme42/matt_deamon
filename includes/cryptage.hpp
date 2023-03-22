@@ -21,11 +21,11 @@ class Cryptage
         std::string base64_encode(const std::string& input);
         
     public:
-    Cryptage();
-    Cryptage(const Cryptage &cryptage);
-    ~Cryptage();
+    Cryptage() = default;
+    Cryptage(const Cryptage &cryptage) = default;
+    ~Cryptage() = default;
         
-    Cryptage &operator=(const Cryptage &cryptage);
+    Cryptage &operator=(const Cryptage &cryptage) = default;
 
     std::string aes_encrypt(const std::string& plaintext, const std::string& key);
     std::string aes_decrypt(const std::string& ciphertext, const std::string& key);

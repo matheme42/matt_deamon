@@ -34,11 +34,11 @@ class Server {
         std::vector <std::string> taskNameList;
         int Demonize();
     public:
-        Server();
-        Server(const Server &server);
-        ~Server();
+        Server() = default;
+        Server(const Server &server) = default;
+        ~Server() = default;
         
-        Server &operator=(const Server &server);
+        Server &operator=(const Server &server) = default;
 
         std::function<std::string(const char *)> onMessageReceive;
         std::function<std::string(std::string)> decrypter;

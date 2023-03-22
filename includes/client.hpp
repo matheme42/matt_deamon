@@ -60,11 +60,11 @@ class Client
         bool listen;
 
     public:
-        Client();
-        Client(const Client &client);
-        ~Client();
+        Client() = default;
+        Client(const Client &client) = default;
+        ~Client() = default;
             
-        Client &operator=(const Client &client);
+        Client &operator=(const Client &client) = default;
 
         std::function<std::string(std::string)> encrypter;
         std::function<std::string(std::string)> decrypter;

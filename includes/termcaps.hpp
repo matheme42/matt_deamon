@@ -14,11 +14,11 @@ class Termcaps
         int column_count;
         int line_count;
 
-        Termcaps();
-        Termcaps(const Termcaps &termcaps);
-        ~Termcaps();
+        Termcaps() = default;
+        Termcaps(const Termcaps &termcaps) = default;
+        ~Termcaps() = default;
         
-        Termcaps &operator=(const Termcaps &termcaps);
+        Termcaps &operator=(const Termcaps &termcaps) = default;
 
 
         void getTermSize();

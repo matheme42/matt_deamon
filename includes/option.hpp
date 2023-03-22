@@ -38,11 +38,11 @@ class Option {
         std::string resolve_dns(const std::string& domain_name);
         void        usage();
     public:
-        Option();
-        Option(const Option &option);
-        ~Option();
+        Option() = default;
+        Option(const Option &option) = default;
+        ~Option() = default;
         
-        Option &operator=(const Option &option);
+        Option &operator=(const Option &option) = default;
         /// configs
         std::string crytage_key;
         std::string master_password;
