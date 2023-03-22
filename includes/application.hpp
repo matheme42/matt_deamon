@@ -30,11 +30,11 @@ class Application {
         bool CheckForLockFile();
         bool CheckForInstance();
     public:
-        Application();
-        Application(const Application &app);
-        ~Application();
+        Application() = default;
+        Application(const Application &app) = default;
+        ~Application() = default;
             
-        Application &operator=(const Application &app);
+        Application &operator=(const Application &app) = default;
         /// initialize
         void initWithArg(int ac, char **av);
 

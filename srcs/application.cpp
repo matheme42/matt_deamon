@@ -1,16 +1,5 @@
 #include "application.hpp"
 
-
-Application::Application() {};
-
-Application::Application(const Application &app) {};
-
-Application::~Application() {};
-    
-Application& Application::operator=(const Application &app) {
-    return *this;
-}
-
 #ifndef MATTDEAMONCLIENT
 int  Application::create_directory_recursive(char *dir, mode_t mode)
 {
