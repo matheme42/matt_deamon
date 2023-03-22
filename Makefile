@@ -23,7 +23,7 @@ INC_PATH= includes
 
 INC= $(INC_PATH)/*
 
-NAME_SRC= main.cpp server.cpp application.cpp option.cpp command.cpp client.cpp termcaps.cpp logging.cpp cryptage.cpp \
+NAME_SRC= main.cpp server.cpp application.cpp option.cpp client.cpp termcaps.cpp logging.cpp cryptage.cpp \
 
 NAME_SRC_LEN	= $(shell echo -n $(NAME_SRC) | wc -w)
 I				= 
