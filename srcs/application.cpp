@@ -37,8 +37,8 @@ bool Application::CheckForInstance() {
             cmdline = cmdline.substr(cmdline.find("\t") + 1);
 
             // Check if the cmdline contains the process name
-            if (cmdline.find("matt_daemon") != std::string::npos && std::stoi(entry->d_name) != pid) {
-                std::string ret = "An instance of matt_daemon is already running pid: " + std::string(entry->d_name);
+            if (cmdline.find("Matt_daemon") != std::string::npos && std::stoi(entry->d_name) != pid) {
+                std::string ret = "An instance of Matt_daemon is already running pid: " + std::string(entry->d_name);
                 std::cout << LIGHT_RED << ret << DEFAULT_COLOR << std::endl;
                 reporter.error(ret);
                 closedir(dir);
@@ -52,22 +52,26 @@ bool Application::CheckForInstance() {
 
 bool Application::CheckForLockFile() {
 
-   if (CheckForInstance()) return true;
-    if (FILE *file = fopen(LOCKFILE, "r+")) {
-        fclose(file);
-        std::string ret = "matt_daemon don't quit proprely, a lock file prevents starting: " + std::string(LOCKFILE) + " please remove it and try again";
+    std::string path = LOCKFILE;
+    std::string directory = path.substr(0, path.find_last_of('/'));
+    if (create_directory_recursive((char*)directory.c_str(), S_IRWXU | S_IRWXO))
+        std::cout << "can't create lock file" << path;
+
+    if ((lockfile_fd = open(LOCKFILE, O_RDONLY | O_CREAT)) < 0) {
+        std::string ret = "Matt_daemon: can't open / create the lock file: " + std::string(LOCKFILE);
         std::cout << LIGHT_RED << ret << DEFAULT_COLOR << std::endl;
         reporter.error(ret);
         return true;
     }
+    if (flock(lockfile_fd, LOCK_EX | LOCK_NB) < 0) {
+        std::string ret = "Matt_daemon: can't start, a lock file prevents starting: " + std::string(LOCKFILE) + " : please remove it and try again";
+        std::cout << LIGHT_RED << ret << DEFAULT_COLOR << std::endl;
+        reporter.error(ret);
+        return true;  
+    }
 
-    std::string path = LOCKFILE;
-    std::string directory = path.substr(0, path.find_last_of('/'));
-    if (create_directory_recursive((char*)directory.c_str(), S_IRWXU | S_IRWXO))
-        std::cout << "can't log to file:" << path;
+    if (CheckForInstance()) return true;
 
-    std::ofstream outfile (LOCKFILE);
-    outfile.close();
     return false;
 }
 
@@ -104,6 +108,7 @@ void Application::start() {
         }
 
         server.start();
+        close(lockfile_fd);
         remove(LOCKFILE);
         reporter.system("stop");
         reporter.close();

@@ -9,6 +9,7 @@
 
 #include <libgen.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 #include <dirent.h>
 #include <fstream>
 #include <iostream>
@@ -29,6 +30,8 @@ class Application {
         void configureLogger();
         bool CheckForLockFile();
         bool CheckForInstance();
+
+        int lockfile_fd;
     public:
         Application() = default;
         Application(const Application &app) = default;
