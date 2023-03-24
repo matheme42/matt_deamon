@@ -20,6 +20,10 @@
 
 #include <logging.hpp>
 
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/readline.h>
+
 class Client
 {
     #define DEFAULT_PROMPT BLUE << "matt_deamon " << DARK_BLUE << "✗ " << DEFAULT_COLOR

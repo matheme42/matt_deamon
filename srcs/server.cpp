@@ -115,83 +115,98 @@ std::string Server::configure(int port, std::string master_password) {
 
     fcntl(server_fd, F_SETFL, O_NONBLOCK);
     running = true;
-
+/*
     if(Demonize()) {
         reporter.error("can't convert into daemon");
         ret = ret + "can't convert into daemon";
         return (ret);
-    }
+    }*/
 
     return (ret);
 }
 
-void Server::start() {
-    int     ret;
-    std::string command_ret;
+void Server::listenForConnection() {
+    int socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
+    if (socket >= 0) {
+        if (client_socket.size() == MAX_CLIENT) {
+            reporter.system("someone try to connect but server is full");
+            sendMessage(socket, "server is full");
+            close(socket);
+        } else {
+            if (master_password.size() != 0) {
+                reporter.system("someone try connect to the server");
+                sendMessage(socket, "password: ");
+            } else {
+                reporter.system("someone connect to the server");
+                authenticate_client.push_back(socket);
+            }
+            fcntl(socket, F_SETFL, O_NONBLOCK);
+            client_socket.push_back(socket);
+        }
+    }
+}
 
+std::string Server::readClientSocket(int socket) {
+    char        *line = NULL;
+    int         c = 0;
+    size_t      size = 0;
+    std::string str;
+
+    if (read(socket, &c, 1) == 0) {
+        reporter.system("someone disconnect from the server");
+        client_socket.erase(std::find(client_socket.begin(), client_socket.end(), socket));
+        authenticate_client.erase( std::remove( authenticate_client.begin(), authenticate_client.end(), socket), authenticate_client.end());
+        return "";
+    }
+    if (getline(&line, &size, fdopen(socket, "r")) < 0)  {
+        return "";
+    }
+
+    str = str + (char*)&c + line;
+    free(line);
+    return str;
+}
+
+void Server::checkSocketMessage(int socket) {
+    std::string command_ret;
+    std::string request;
+    int         ret;
+
+    if (socket <= 0) return ;
+    request = readClientSocket(socket);
+    if (request.empty()) return ;
+
+        /// check for authentication
+    if (std::find(authenticate_client.begin(), authenticate_client.end(), socket) == authenticate_client.end()) {
+        
+        int cmp;
+        if (decrypter) cmp = strcmp(decrypter(request).c_str(), master_password.c_str());
+        else cmp = strcmp(request.c_str(), master_password.c_str());
+        if (cmp != 0) {
+            sendMessage(socket, "password: ");
+        } else {
+            reporter.system("successfull connecting to the server");
+            authenticate_client.push_back(socket);
+            sendMessage(socket, "authenticate");
+        }
+        return ;
+    }
+
+    if (onMessageReceive) {
+        if (decrypter) command_ret = onMessageReceive(decrypter(request).c_str());
+        else command_ret = onMessageReceive(request.c_str());
+    }
+
+    if (command_ret[0] != '\0') sendMessage(socket, command_ret);
+    else sendMessage(socket, "\a");
+}
+
+void Server::start() {
     reporter.system("server start");
     while (running) {
-        usleep(9000);
-
-        int localNewSocket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-        if (localNewSocket >= 0) {
-            if (client_socket.size() == MAX_CLIENT) {
-                reporter.system("someone try to connect but server is full");
-                sendMessage(localNewSocket, "server is full");
-                close(localNewSocket);
-            } else {
-                if (master_password.size() != 0) {
-                    reporter.system("someone try connect to the server");
-                    sendMessage(localNewSocket, "password: ");
-                } else {
-                    reporter.system("someone connect to the server");
-                    authenticate_client.push_back(localNewSocket);
-                }
-                fcntl(localNewSocket, F_SETFL, O_NONBLOCK);
-                client_socket.push_back(localNewSocket);
-            }
-        }
-
-        int socketListLen = client_socket.size();
-        for (int i = 0; i < socketListLen; i++) {
-            int new_socket = client_socket.at(i);
-            if (new_socket > 0 && (ret = read(new_socket, buffer, 1024)) >= 0) {
-                if (ret == 0) {
-                    reporter.system("someone disconnect from the server");
-                    client_socket.erase(client_socket.begin() + i--);
-                    authenticate_client.erase( std::remove( authenticate_client.begin(), authenticate_client.end(), new_socket), authenticate_client.end() );
-                    socketListLen--;
-                    continue;
-                }
-
-                /// check password
-                if (std::find(authenticate_client.begin(), authenticate_client.end(), new_socket) == authenticate_client.end()) {
-                    
-                    int cmp;
-                    if (decrypter) cmp = strcmp(decrypter(buffer).c_str(), master_password.c_str());
-                    else cmp = strcmp(buffer, master_password.c_str());
-                    if (cmp != 0) {
-                        sendMessage(new_socket, "password: ");
-                    } else {
-                        reporter.system("successfull connecting to the server");
-                        authenticate_client.push_back(new_socket);
-                        sendMessage(new_socket, "authenticate");
-                        usleep(10000);
-                    }
-                    bzero(buffer, ret);
-                    continue;
-                }
-
-                if (onMessageReceive) {
-                    if (decrypter) command_ret = onMessageReceive(decrypter(buffer).c_str());
-                    else command_ret = onMessageReceive(buffer);
-                }
-
-                if (command_ret[0] != '\0') sendMessage(new_socket, command_ret);
-                else sendMessage(new_socket, "\n");
-                bzero(buffer, ret);
-        }
-        }
+        usleep(90000);
+        listenForConnection();
+        for (int i = 0; i < client_socket.size(); i++) checkSocketMessage(client_socket.at(i));
     }
 
     usleep(10000);
@@ -202,7 +217,6 @@ void Server::start() {
         shutdown(socket, SHUT_RDWR);
         close(socket);
     }
-    // closing the listening socket
     if (server_fd > 0) {
         shutdown(server_fd, SHUT_RDWR);
         close(server_fd);

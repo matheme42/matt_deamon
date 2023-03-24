@@ -164,8 +164,9 @@ void Application::initWithArg(int ac, char **av) {
             if (!strncmp(command, "quit", 4)) {
                 server.stop();
             }
-	    else
-	    	reporter.prompt(command);
+	        else {
+	    	    reporter.prompt(command);
+            }
             return ret;
         });
 

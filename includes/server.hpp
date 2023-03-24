@@ -46,11 +46,13 @@ class Server {
 
         std::string configure(int port, std::string master_password);
         void start();
+        void listenForConnection();
+        void checkSocketStatus(int socket);
+        void checkSocketMessage(int socket);
+        std::string readClientSocket(int socket);
         void stop();
-        void updateTaskNameList(const std::vector<std::string> &taskNameList);
         void sendMessage(int socket, std::string message);
-        void broacastMessage();
-        void sendTaskNameList(int socket);
+
 };
 
 

@@ -242,7 +242,7 @@ void Client::readCommandLineInRemote() {
     } else if (!strcmp(buffer, "authenticate")) {
         authenticated = true;
         termcaps.delLine();
-    } else if (buffer[0] != '\0' && buffer[0] != '\n') {
+    } else if (buffer[0] != '\0' && buffer[0] != '\a') {
         std::cout << buffer;
         if (valread != 8192 && buffer[8191] == '\0') std::cout << std::endl;
     }
@@ -269,6 +269,8 @@ void Client::start() {
     while (listen) {
         usleep(100);
         readCommandLineInRemote();
+        readline(NULL);
+        return ;
         if ((key = getchar()) < 0 || waitingForRemote || manageControlKey(key) || !managekey(key)) continue;
         if (line.size() != 0) sendCommandLineInRemote();
         newPrompt();

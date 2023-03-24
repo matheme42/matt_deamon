@@ -46,12 +46,12 @@ GPP			= g++ -std=c++11 $(OPTIMISATION_FLAG) $(DEBUG_FLAG)
 all: $(NAME_S) $(NAME)
 
 $(NAME_S) : $(OBJS_S)
-	@$(GPP) $^ -o $@ -lncurses -lcrypto -lcryptopp
+	@$(GPP) $^ -o $@ -lncurses -lcrypto -lcryptopp -lreadline
 	@echo "	\033[2K\r$(DARK_BLUE)$(NAME_S):\t\t$(GREEN)loaded\033[0m"
 	@$(eval I=$(shell echo $$((0))))
 
 $(NAME) : $(OBJS)
-	@$(GPP) $^ -o $@ -lncurses -lcrypto -lcryptopp
+	@$(GPP) $^ -o $@ -lncurses -lcrypto -lcryptopp -lreadline
 	@echo "	\033[2K\r$(DARK_BLUE)$(NAME):\t\t$(GREEN)loaded\033[0m"
 
 
