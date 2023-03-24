@@ -8,10 +8,13 @@ Tintin_reporter reporter;
 
 void sig_handler(int sig)
 {
-  reporter.signal(strsignal(sig));
+#ifdef MATTDEAMONCLIENT
   if (sig == SIGINT) application.sigint();
   else if (sig == SIGWINCH) application.sigwinch();
-  else if (sig == SIGSEGV || sig == SIGTERM || sig == SIGQUIT) application.stop();
+#else
+  reporter.signal(strsignal(sig));
+#endif
+  if (sig == SIGSEGV || sig == SIGTERM || sig == SIGQUIT) application.stop();
 }
 
 int main(int ac, char **av) {

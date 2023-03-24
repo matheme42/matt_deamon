@@ -267,7 +267,7 @@ void Client::start() {
     newPrompt();
     configureKeyboard();
     while (listen) {
-        usleep(9000);
+        usleep(100);
         readCommandLineInRemote();
         if ((key = getchar()) < 0 || waitingForRemote || manageControlKey(key) || !managekey(key)) continue;
         if (line.size() != 0) sendCommandLineInRemote();

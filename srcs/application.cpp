@@ -108,6 +108,7 @@ void Application::start() {
         }
 
         server.start();
+        flock(lockfile_fd, LOCK_UN);
         close(lockfile_fd);
         remove(LOCKFILE);
         reporter.system("stop");
@@ -160,9 +161,11 @@ void Application::initWithArg(int ac, char **av) {
 
         server.onMessageReceive = ([&] (const char *command) {
             std::string ret;
-            if (!strcmp(command, "quit")) {
+            if (!strncmp(command, "quit", 4)) {
                 server.stop();
             }
+	    else
+	    	reporter.prompt(command);
             return ret;
         });
 
