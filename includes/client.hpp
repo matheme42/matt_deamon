@@ -27,6 +27,7 @@
 class Client
 {
     #define DEFAULT_PROMPT BLUE << "matt_deamon " << DARK_BLUE << "✗ " << DEFAULT_COLOR
+    #define DEFAULT_PROMPT_STR BLUE + "matt_deamon " + DARK_BLUE + "✗ " + DEFAULT_COLOR
     #define DEFAULT_PROMPT_SIZE 12
 
     std::vector <std::string> commandList = {

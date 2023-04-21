@@ -115,12 +115,12 @@ std::string Server::configure(int port, std::string master_password) {
 
     fcntl(server_fd, F_SETFL, O_NONBLOCK);
     running = true;
-/*
+
     if(Demonize()) {
         reporter.error("can't convert into daemon");
         ret = ret + "can't convert into daemon";
         return (ret);
-    }*/
+    }
 
     return (ret);
 }

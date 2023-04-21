@@ -264,18 +264,17 @@ void Client::start() {
     listen = true;
     waitingForRemote = false;
 
+    std::string str;
+    str = str + DEFAULT_PROMPT_STR;
     newPrompt();
-    configureKeyboard();
     while (listen) {
         usleep(100);
         readCommandLineInRemote();
-        readline(NULL);
-        return ;
+    //    return ;
         if ((key = getchar()) < 0 || waitingForRemote || manageControlKey(key) || !managekey(key)) continue;
         if (line.size() != 0) sendCommandLineInRemote();
         newPrompt();
     }
-    restoreKeyboard();
 }
 
 void Client::start(std::string host, int port, std::string master_password) {

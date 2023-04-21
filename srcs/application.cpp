@@ -118,7 +118,7 @@ void Application::start() {
 
 void Application::stop() {
     #ifdef MATTDEAMONCLIENT
-        client.clear();
+        client.stop();
     #else
         server.stop();
     #endif
