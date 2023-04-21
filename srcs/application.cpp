@@ -165,7 +165,8 @@ void Application::initWithArg(int ac, char **av) {
                 server.stop();
             }
 	        else {
-	    	    reporter.prompt(command);
+                std::string command_str = std::string(command);
+	    	    reporter.prompt(command_str.substr(0, command_str.find('\n')));
             }
             return ret;
         });

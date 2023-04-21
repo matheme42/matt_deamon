@@ -16,7 +16,7 @@
 #include <color.hpp>
 
 class Tintin_reporter {
-    #define LOGGING_DEFAULT_PATH "/var/log/-matt_daemon/matt_daemon.log"
+    #define LOGGING_DEFAULT_PATH "/var/log/matt_daemon/matt_daemon.log"
 
     private:
         std::string outputfile;

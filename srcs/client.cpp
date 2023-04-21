@@ -266,15 +266,16 @@ void Client::start() {
 
     std::string str;
     str = str + DEFAULT_PROMPT_STR;
+    configureKeyboard();
     newPrompt();
     while (listen) {
         usleep(100);
         readCommandLineInRemote();
-    //    return ;
         if ((key = getchar()) < 0 || waitingForRemote || manageControlKey(key) || !managekey(key)) continue;
         if (line.size() != 0) sendCommandLineInRemote();
         newPrompt();
     }
+    restoreKeyboard();
 }
 
 void Client::start(std::string host, int port, std::string master_password) {
